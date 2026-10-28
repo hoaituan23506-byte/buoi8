@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nguyễn Hoài Tấn - Portfolio</title>
+  <!-- Thư viện AOS CSS (Hoạt động 3) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <style>
+    :root {
+      --color-bg: #061a10;
+      --color-surface: #0f2e1d;
+      --color-primary: #047857;
+      --color-on-primary: #ffffff;
+      --color-text: #e2e8f0;
+      --color-text-muted: #94a3b8;
+      --font-code: 'Courier New', Courier, monospace;
+      --space-md: 1.5rem;
+      --radius-md: 8px;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-theme {
+      --color-bg: #f8fafc;
+      --color-surface: #ffffff;
+      --color-text: #1e293b;
+      --color-text-muted: #64748b;
+    }
+
+    /* Màn hình Loading Spinner (Hoạt động 2) */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--color-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #d1d5db;
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Header & Navigation */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(6, 26, 16, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .logo { color: var(--color-primary); font-weight: bold; font-family: var(--font-code); font-size: 1.2rem; }
+    nav ul { display: flex; list-style: none; gap: 1.5rem; margin: 0; padding: 0; }
+    nav a { color: var(--color-text); text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+    nav a:hover { color: var(--color-primary); }
+    .theme-toggle { background: var(--color-surface); color: var(--color-text); border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+
+    /* Hamburger Menu (Bài 5) */
+    .menu-btn { display: none; background: none; border: 0; cursor: pointer; flex-direction: column; gap: 5px; }
+    .menu-btn span { display: block; width: 25px; height: 3px; background: var(--color-text); transition: 0.3s; }
+    .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .menu-btn.active span:nth-child(2) { opacity: 0; }
+    .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* Main Container */
+    main { max-width: 1000px; margin: 0 auto; padding: 100px 20px 50px; }
+    section { padding: 60px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .sec-title { font-family: var(--font-code); color: var(--color-primary); font-size: 1.8rem; margin-bottom: 1.5rem; }
+
+    /* Hero Section & Greeting */
+    .hero { padding: 40px 0; }
+    .greeting-text { font-size: 1.1rem; color: var(--color-primary); font-weight: bold; margin-bottom: 10px; animation: fadeIn 1s ease-in-out; }
+    .hero h1 { font-size: 2.5rem; margin: 0 0 10px; }
+    .hero p { color: var(--color-text-muted); font-size: 1.1rem; }
+
+    /* Card Flip Effect (Bài 2) */
+    .flip-card { perspective: 1000px; width: 100%; max-width: 320px; height: 200px; margin-top: 20px; }
+    .flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+    .flip-card:hover .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; background: var(--color-surface); border: 1px solid rgba(255,255,255,0.1); }
+    .flip-back { transform: rotateY(180deg); background: var(--color-primary); color: white; }
+
+    /* Skills Grid & Bars (Bài 6) */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .skill-box { background: var(--color-surface); padding: 20px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1); }
+    .bar { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+    .progress { background: var(--color-primary); height: 100%; width: 0; transition: width 1s ease-in-out; }
+
+    /* Hoạt động 1: Micro-interactions - Nút bấm cảm xúc */
+    .contact-box { background: var(--color-surface); padding: 30px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1); }
+    .btn {
+      position: relative;
+      display: inline-block;
+      padding: 12px 28px;
+      border: 0;
+      border-radius: var(--radius-md);
+      font: bold 1rem var(--font-code);
+      text-decoration: none;
+      color: var(--color-on-primary);
+      background-color: var(--color-primary);
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+      transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      will-change: transform;
+    }
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+    }
+    .btn:active {
+      transform: translateY(0) scale(0.88);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .btn.sent { animation: sent-pop 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    @keyframes sent-pop {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.92); }
+      70% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .contact-actions { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
+    .btn-outline { background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); }
+    .btn-outline:hover { background: var(--color-primary); color: white; }
+
+    footer { text-align: center; padding: 30px; color: var(--color-text-muted); font-size: 0.9rem; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Mobile */
+    @media(max-width: 768px) {
+      nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-surface); padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      nav ul.open { display: flex; }
+      .menu-btn { display: flex; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Màn hình Loading (Hoạt động 2) -->
+  <div id="loader"><div class="spinner"></div></div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">&lt;NHT /&gt;</div>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <ul id="menu">
+        <li><a href="#gioi-thieu">Giới thiệu</a></li>
+        <li><a href="#ky-nang">Kỹ năng</a></li>
+        <li><a href="#du-an">Dự án</a></li>
+        <li><a href="#lien-he">Liên hệ</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" id="themeBtn">🌙 Dark</button>
+  </header>
+
+  <main>
+    <!-- Hero Section & Realtime Greeting -->
+    <section class="hero" data-aos="fade-up">
+      <div id="greeting" class="greeting-text"></div>
+      <p style="color: var(--color-primary); margin:0;">Đại học Lạc Hồng</p>
+      <h1>Nguyễn Hoài Tấn</h1>
+      <p>Sinh viên Công nghệ thông tin • Frontend Developer</p>
+    </section>
